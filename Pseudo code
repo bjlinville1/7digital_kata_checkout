@@ -1,0 +1,37 @@
+# Make a new class of Item, and give the items attributes of price and SKU. 
+
+# Item class
+# items have:
+#     SKU (unique identification numbers) string
+#     Price integer
+    #Possible solution for "sale prices"
+#     Special: boolean (activates a method when true)
+#     method accepts 2 parameters(quantity_needed_to_qualify, %discount)
+
+#Accept a user input and push user input to an array
+ gets
+ items = gets.to_a
+
+# count the quanitity of each item 
+  # Googled: "Count the number of times an element occurs in an array"
+  #selected a good solution
+  #checked in the console. It works.
+    cart = {}
+  
+    items.each do |x| 
+      cart[x] += 1
+    end
+  #This is a situation where .map would overwrite the initial array, allowing me a 1 line solution, but i chose not to so I could reuse the items array. 
+  #The variable "cart" now holds a hash consisting of the name of each item, and the quantity of each to be purchased. 
+
+  #Check for quantity for special pricing, and if it qualifies, substitute the sale price. I'm not sure yet how I'll do this, but I know I'll do it last.
+
+  #Multiply each item quantity by its price, and sum it. 
+  subtotal = 0
+  items.each do |x|
+    cart[x]*items[x[:price]] += subtotal
+  end
+
+  #return the subtotal to the user
+  puts subtotal
+
