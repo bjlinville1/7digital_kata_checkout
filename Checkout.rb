@@ -1,11 +1,11 @@
 #checkout program
-
 class Item
   
   # Set Attributes
   attr_accessor :sku
   attr_accessor :price
   attr_accessor :quantity
+  attr_accessor :sale
 
   # Set defaults
   def initialize
@@ -13,6 +13,7 @@ class Item
     self.sku = nil
     self.price = nil
     self.quantity = 0
+    self.sale = "none"
   end
 
   # Create your items available for purchase
@@ -24,23 +25,21 @@ class Item
   def self.add_item(*item_attributes)
     item = Item.new
     item.sku = item_attributes[0]
-    # puts "a new item was skud!"
     item.price = item_attributes[1]
-    # puts "a new item was priced!"
+    item.quantity = item_attributes[2]
+    item.sale = item_attributes[3]
     @items.push item
-    # puts "a new item was pushed!"
   end
 
 
-  Item.add_item("a", 50)
-  Item.add_item("b", 30)
-  Item.add_item("c", 20)
-  Item.add_item("d", 15)
-  # puts "items were added successfully"
-  #Accept a list of items to be purchased
-  # items = gets.to_a
+  Item.add_item("a", 50, 0, "Summer")
+  Item.add_item("b", 30, 0, "Fall")
+  Item.add_item("c", 20, 0)
+  Item.add_item("d", 15, 0)
+
   p @items
 
+  # Get proper user input
 
   puts "Please enter the items you want, with no spaces, or separation of any kind. For example: 'abc'.
    If you want more than one of any item, please re-enter it, until you reach your desired quantity. For example: 'aaaaabc'."  
@@ -55,7 +54,6 @@ class Item
   #I decided it would be easier to add a quantity attribute with a default of 0, then loop through the user input and add 1 to it each time it found a matching item for sale. We have to do this individually for each possible item, so I used z to represent the number of items available by using @items.each and incrementing 1 each iteration. 
 
   z = 0
-
   @items.each do |item|
     cart.each do |x| 
       if @items[z].sku == x
@@ -65,5 +63,51 @@ class Item
     z += 1
   end
 
+#We can now more easily check for special pricing and then solve for our subtotal when sales are involved. I want to be able to quickly and easily update each sale's attributes, as well as add new sales to existing items. A good way to that would be to make a new Sale class, but just for the sake of the exercise, I'll keep things local to this class. 
+  
+  @sales = [
+  {name:"Summer", quantity: 3, percentage_discount: 13}, {name: "Fall", quantity: 2, percentage_discount: 25}]
+
+# We don't want stacking discounts, so we'll only accept one sale per item for now. I've added another attribute to our items to accomodate this flexibility, and written the following logic to check items to see if items are on sale, and if so apply the appropriate discounts, and finally add up the total cost.
+  
+  subtotal = 0
+  #Check each item for sales
+  @items.each do |x|
+    if x.sale
+
+      @sales.each do |y|
+
+        #When there is a sale on an item, check to see if the quantity the user input qualifies for it.
+        if y[:name] == x.sale && x.quantity >= y[:quantity]
+
+          #If so, solve for the sale price, as well as the number of times it will be applied          
+          sale_price = y[:quantity] * ((100*x.price - 100*y[:percentage_discount]/100*x.price)/100) #To Do: all integers to_floats
+
+          number_of_sale_groups = x.quantity/y[:quantity] 
+
+          #subtotal it
+          subtotal += number_of_sale_groups * sale_price
+
+          #remove the items already accounted for
+          #To Do: this each loop is catching non-sale-qualified instances of items, and the following subtraction is eliminating them from the subtotal. Fix this
+          x.quantity -= y[:quantity]
+
+          #and account for any leftovers
+          #To Do: Account for multiple sales on the same item.
+          if x.quantity > 0
+
+            subtotal += x.quantity * x.price
+          end
+
+
+        end
+      end  
+    #Otherwise, just multiply price by quantity and subtotal it.        
+    else 
+      subtotal += x.quantity * x.price
+
+    end
+  end
+          p subtotal
 
 end
