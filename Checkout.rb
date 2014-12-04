@@ -39,14 +39,14 @@ class Item
 
   p @items
 
-  # Get proper user input
+  # Get user input
 
-  puts "Please enter the items you want, with no spaces, or separation of any kind. For example: 'abc'.
-   If you want more than one of any item, please re-enter it, until you reach your desired quantity. For example: 'aaaaabc'."  
+  puts "Please enter the items you want, for example: 'abc'.
+   If you want more than one of any item, please re-enter it, until you reach your desired quantity. For example: 'abbbbbc'. And please, don't do anything mean, like wipe people's hard drives. Enjoy!"  
 
   user_items = gets.chomp
 
-  # After checking my initial solution, I've found that the code on 7 digital's Readme is making use of a regular expression named .scan as well as .split. They are slightly cleaner, but using .chars to push the string to an array works just fine here. 
+  # After checking my initial solution, I've found that the code on 7 digital's Readme is making use of a regular expression named .scan as well as .split. They are slightly cleaner, but using .chars to push the string to an array works just fine here, and actually executes faster. 
 
   cart = user_items.chars
   p cart
@@ -71,44 +71,42 @@ class Item
 # We don't want stacking discounts, so we'll only accept one sale per item for now. I've added another attribute to our items to accomodate this flexibility, and written the following logic to check items to see if items are on sale, and if so apply the appropriate discounts, and finally add up the total cost.
   
   subtotal = 0
+
   #Check each item for sales
   @items.each do |x|
     if x.sale 
 
       @sales.each do |y|
            
-        #When there is a sale on an item, check to see if the quantity the user input qualifies for it.
-        if y[:name] == x.sale && x.quantity >= y[:quantity]
+        #When a sale is possible for an item, identify which sale it is.
+        if y[:name] == x.sale
 
-          #If so, solve for the sale price, as well as the number of times it will be applied
-          sale_price = y[:quantity] * ((100*x.price - 100*y[:percentage_discount]/100*x.price)/100) #To Do: all integers to_floats
+          #Solve for the sale price
+          #To Do: all integers to_floats
+          sale_price = y[:quantity] * ((100*x.price - 100*y[:percentage_discount]/100*x.price)/100) 
 
+          #Solve for the number of times it will be applied
+          #Ruby truncates this so anything less 1 = 0.
           number_of_sale_groups = x.quantity/y[:quantity] 
 
           #subtotal it
           subtotal += number_of_sale_groups * sale_price
+
+          #and account for all leftovers & items who have possible discounts, but who's sale conditions have not been met. 
+          subtotal += (x.quantity % y[:quantity]) * x.price
   
-          #remove the items already accounted for.
-          x.quantity -= y[:quantity]
-  
-          #and account for any leftovers
-          #To Do: Account for multiple sales on the same item.
-          if x.quantity > 0
-            subtotal += x.quantity * x.price
-          end
-          p "'#{x.sku}', #{subtotal}"
-        #added this logic to account for items with sales that are possible, but who's sale conditions have not been met.
-        elsif y[:name] == x.sale 
-          subtotal += x.quantity * x.price
-          p "'#{x.sku}', #{subtotal}"
         end
+
+        p "'#{x.sku}', #{subtotal}"
+
       end  
 
-    #Otherwise, just multiply price by quantity and subtotal it.
+    #If there are no sale prices for an item just multiply price by quantity and subtotal it.
     else 
       subtotal += x.quantity * x.price
       p "'#{x.sku}', #{subtotal}"
     end
   end
-  p "Total #{subtotal}"         
+  p "Total #{subtotal}" 
+      
 end
