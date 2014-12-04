@@ -10,7 +10,7 @@
 
 #Accept a user input and push user input to an array
  gets
- items = gets.to_a
+ user_items = gets.to_a
 
 # count the quanitity of each item 
   # Googled: "Count the number of times an element occurs in an array"
@@ -18,7 +18,7 @@
   #checked in the console. It works.
     cart = {}
   
-    items.each do |x| 
+    user_items.each do |x| 
       cart[x] += 1
     end
   #This is a situation where .map would overwrite the initial array, allowing me a 1 line solution, but i chose not to so I could reuse the items array. 
@@ -28,8 +28,8 @@
 
   #Multiply each item quantity by its price, and sum it. 
   subtotal = 0
-  items.each do |x|
-    cart[x]*items[x[:price]] += subtotal
+  user_items.each do |x|
+    cart[x]*user_items[x[:price]] += subtotal
   end
 
   #return the subtotal to the user
