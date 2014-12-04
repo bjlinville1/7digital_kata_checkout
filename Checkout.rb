@@ -96,12 +96,11 @@ class Item
           subtotal += (x.quantity % y[:quantity]) * x.price
   
         end
-
-        p "'#{x.sku}', #{subtotal}"
-
       end  
 
-    #If there are no sale prices for an item just multiply price by quantity and subtotal it.
+      p "'#{x.sku}', #{subtotal}"
+
+    #If there are no sales possible for an item just multiply price by quantity and subtotal it.
     else 
       subtotal += x.quantity * x.price
       p "'#{x.sku}', #{subtotal}"
