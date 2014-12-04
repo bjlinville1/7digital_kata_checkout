@@ -82,11 +82,11 @@ class Item
         if y[:name] == x.sale
 
           #Solve for the sale price
-          #To Do: all integers to_floats
-          sale_price = y[:quantity] * ((100*x.price - 100*y[:percentage_discount]/100*x.price)/100) 
+          sale_price = y[:quantity] * (x.price - x.price * (y[:percentage_discount].to_f)/100) 
 
           #Solve for the number of times it will be applied
           #Ruby truncates this so anything less 1 = 0.
+
           number_of_sale_groups = x.quantity/y[:quantity] 
 
           #subtotal it
@@ -97,7 +97,6 @@ class Item
   
         end
       end  
-
       p "'#{x.sku}', #{subtotal}"
 
     #If there are no sales possible for an item just multiply price by quantity and subtotal it.
@@ -107,5 +106,4 @@ class Item
     end
   end
   p "Total #{subtotal}" 
-      
 end
