@@ -73,41 +73,42 @@ class Item
   subtotal = 0
   #Check each item for sales
   @items.each do |x|
-    if x.sale
+    if x.sale 
 
       @sales.each do |y|
-
+           
         #When there is a sale on an item, check to see if the quantity the user input qualifies for it.
         if y[:name] == x.sale && x.quantity >= y[:quantity]
 
-          #If so, solve for the sale price, as well as the number of times it will be applied          
+          #If so, solve for the sale price, as well as the number of times it will be applied
           sale_price = y[:quantity] * ((100*x.price - 100*y[:percentage_discount]/100*x.price)/100) #To Do: all integers to_floats
 
           number_of_sale_groups = x.quantity/y[:quantity] 
 
           #subtotal it
           subtotal += number_of_sale_groups * sale_price
-
-          #remove the items already accounted for
-          #To Do: this each loop is catching non-sale-qualified instances of items, and the following subtraction is eliminating them from the subtotal. Fix this
+  
+          #remove the items already accounted for.
           x.quantity -= y[:quantity]
-
+  
           #and account for any leftovers
           #To Do: Account for multiple sales on the same item.
           if x.quantity > 0
-
             subtotal += x.quantity * x.price
           end
-
-
+          p "'#{x.sku}', #{subtotal}"
+        #added this logic to account for items with sales that are possible, but who's sale conditions have not been met.
+        elsif y[:name] == x.sale 
+          subtotal += x.quantity * x.price
+          p "'#{x.sku}', #{subtotal}"
         end
       end  
-    #Otherwise, just multiply price by quantity and subtotal it.        
+
+    #Otherwise, just multiply price by quantity and subtotal it.
     else 
       subtotal += x.quantity * x.price
-
+      p "'#{x.sku}', #{subtotal}"
     end
   end
-          p subtotal
-
+  p "Total #{subtotal}"         
 end
